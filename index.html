@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hermes Imobiliária — Simulador de Avaliação Imobiliária</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-page: #f2f3f5;
+      --bg-card: #ffffff;
+      --grey-dark: #2c3138;
+      --grey-mid: #5b636e;
+      --grey-light: #e5e7eb;
+      --grey-soft: #f8f9fa;
+      --gold: #b8924a;
+      --gold-dark: #987432;
+      --gold-soft: rgba(184, 146, 74, 0.12);
+      --ok-bg: #ecfdf3;
+      --ok-text: #166534;
+      --err-bg: #fef2f2;
+      --err-text: #991b1b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 28px 16px 48px;
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(180deg, #eceef1 0%, #f7f8fa 100%);
+      color: var(--grey-dark);
+      line-height: 1.5;
+    }
+
+    .wrapper {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    /* Cabeçalho com a marca Hermes Imobiliária (sem símbolo da casa) */
+    .brand-header {
+      background: var(--grey-dark);
+      color: #ffffff;
+      border-radius: 14px 14px 0 0;
+      padding: 28px 32px;
+      border-bottom: 3px solid var(--gold);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-wordmark {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: var(--gold);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      margin-top: 6px;
+      font-size: 0.72rem;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      color: #d1d5db;
+      font-weight: 500;
+    }
+
+    .header-badge {
+      font-size: 0.78rem;
+      color: #e5e7eb;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(184, 146, 74, 0.45);
+      padding: 7px 14px;
+      border-radius: 999px;
+      letter-spacing: 0.03em;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--grey-light);
+      border-top: none;
+      border-radius: 0 0 14px 14px;
+      padding: 30px 32px 34px;
+      box-shadow: 0 14px 34px rgba(28, 33, 40, 0.07);
+    }
+
+    .intro {
+      margin: 0 0 24px;
+      color: var(--grey-mid);
+      font-size: 0.95rem;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--grey-dark);
+      margin: 26px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--grey-light);
+    }
+
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 16px;
+      border-radius: 2px;
+      background: var(--gold);
+      display: inline-block;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--grey-dark);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      font-family: inherit;
+      font-size: 0.94rem;
+      color: var(--grey-dark);
+      background: #ffffff;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-soft);
+    }
+
+    /* Chips de Extras sugeridos */
+    .extras-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .chip-extra {
+      background: var(--grey-soft);
+      border: 1px solid #d1d5db;
+      color: var(--grey-dark);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .chip-extra:hover {
+      border-color: var(--gold);
+      background: var(--gold-soft);
+    }
+
+    .chip-extra.ativo {
+      background: var(--grey-dark);
+      border-color: var(--grey-dark);
+      color: #ffffff;
+    }
+
+    /* Zona de upload de fotos (até 3 fotos como na app) */
+    .photos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .photo-slot {
+      position: relative;
+      border: 1.5px dashed #cbd2d9;
+      border-radius: 10px;
+      background: var(--grey-soft);
+      min-height: 132px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .photo-slot:hover {
+      border-color: var(--gold);
+      background: #fcfaf6;
+    }
+
+    .photo-slot input[type="file"] {
+      display: none;
+    }
+
+    .photo-slot .slot-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--grey-dark);
+    }
+
+    .photo-slot .slot-hint {
+      font-size: 0.74rem;
+      color: var(--grey-mid);
+      margin-top: 3px;
+    }
+
+    .photo-slot img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-remove {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      z-index: 2;
+      background: rgba(44, 49, 56, 0.88);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      width: 24px;
+      height: 24px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-slot.has-image .photo-remove {
+      display: flex;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 12px 14px;
+      background: var(--grey-soft);
+      border-radius: 9px;
+      border: 1px solid var(--grey-light);
+      font-size: 0.87rem;
+      color: var(--grey-mid);
+      cursor: pointer;
+    }
+
+    .checkbox-row input {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      accent-color: var(--gold);
+    }
+
+    .btn-submit {
+      margin-top: 22px;
+      width: 100%;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(152, 116, 50, 0.28);
+      transition: transform 0.12s ease, opacity 0.15s ease;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status {
+      margin-top: 16px;
+      padding: 13px 15px;
+      border-radius: 9px;
+      font-size: 0.91rem;
+      display: none;
+    }
+
+    .status.ok {
+      display: block;
+      background: var(--ok-bg);
+      color: var(--ok-text);
+      border: 1px solid #bbf7d0;
+    }
+
+    .status.err {
+      display: block;
+      background: var(--err-bg);
+      color: var(--err-text);
+      border: 1px solid #fecaca;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--grey-mid);
+    }
+
+    @media (max-width: 640px) {
+      .grid,
+      .photos-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-header,
+      .card {
+        padding: 22px 20px;
+      }
+
+      .brand-title {
+        font-size: 1.65rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header class="brand-header">
+      <div class="brand-wordmark">
+        <span class="brand-title">HERMES</span>
+        <span class="brand-sub">Imobiliária</span>
+      </div>
+      <div class="header-badge">Estudo Comparativo de Mercado</div>
+    </header>
+
+    <main class="card">
+      <p class="intro">
+        Preencha as características do imóvel e anexe até 3 fotografias para obter uma estimativa de valor de mercado e o respetivo relatório técnico.
+      </p>
+
+      <form id="simuladorForm">
+        <div class="section-title">1. Identificação e Características do Imóvel</div>
+        <div class="grid">
+          <div class="full">
+            <label for="morada">Morada</label>
+            <input id="morada" name="morada" type="text" placeholder="Ex.: Rua Nova da Vila, Turquel" />
+          </div>
+
+          <div>
+            <label for="freguesia">Freguesia / Zona *</label>
+            <select id="freguesia" name="freguesia" required>
+              <option value="">Selecione uma zona...</option>
+              <option value="Turquel (Alcobaça)">Turquel (Alcobaça)</option>
+              <option value="Benedita (Alcobaça)">Benedita (Alcobaça)</option>
+              <option value="Alcobaça (Centro)">Alcobaça (Centro)</option>
+              <option value="Évora de Alcobaça">Évora de Alcobaça</option>
+              <option value="Aljubarrota (Alcobaça)">Aljubarrota (Alcobaça)</option>
+              <option value="São Martinho do Porto (Alcobaça)">São Martinho do Porto (Alcobaça)</option>
+              <option value="Valado dos Frades / Maiorga">Valado dos Frades / Maiorga</option>
+              <option value="Cela / Bárrio (Alcobaça)">Cela / Bárrio (Alcobaça)</option>
+              <option value="Nazaré (Centro / Praia)">Nazaré (Centro / Praia)</option>
+              <option value="Caldas da Rainha (Centro)">Caldas da Rainha (Centro)</option>
+              <option value="Rio Maior (Centro)">Rio Maior (Centro)</option>
+              <option value="Leiria (Centro)">Leiria (Centro)</option>
+              <option value="Óbidos (Vila / Lagoa)">Óbidos (Vila / Lagoa)</option>
+              <option value="Peniche (Centro / Praia)">Peniche (Centro / Praia)</option>
+              <option value="Torres Vedras (Centro)">Torres Vedras (Centro)</option>
+              <option value="Porto de Mós (Centro)">Porto de Mós (Centro)</option>
+              <option value="Batalha (Centro)">Batalha (Centro)</option>
+              <option value="Marinha Grande (Centro)">Marinha Grande (Centro)</option>
+              <option value="Pombal (Centro)">Pombal (Centro)</option>
+              <option value="Santarém (Centro)">Santarém (Centro)</option>
+              <option value="Coimbra (Centro)">Coimbra (Centro)</option>
+              <option value="Setúbal (Centro)">Setúbal (Centro)</option>
+              <option value="Faro (Centro)">Faro (Centro)</option>
+              <option value="Porto (Centro)">Porto (Centro)</option>
+              <option value="Lisboa (Centro)">Lisboa (Centro)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="tipologia">Tipologia *</label>
+            <select id="tipologia" name="tipologia" required>
+              <option value="">Selecione...</option>
+              <option value="T0">T0</option>
+              <option value="T1">T1</option>
+              <option value="T2">T2</option>
+              <option value="T3">T3</option>
+              <option value="T4+">T4+</option>
+              <option value="Moradia Isolada">Moradia Isolada</option>
+              <option value="Moradia Geminada / Banda">Moradia Geminada / Banda</option>
+              <option value="Terreno / Quinta">Terreno / Quinta</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="areaUtil">Área Útil (m²) *</label>
+            <input id="areaUtil" name="areaUtil" type="number" min="1" step="any" required placeholder="Ex.: 100" />
+          </div>
+
+          <div>
+            <label for="areaBruta">Área Bruta (m²)</label>
+            <input id="areaBruta" name="areaBruta" type="number" min="0" step="any" placeholder="Opcional" />
+          </div>
+
+          <div>
+            <label for="estado">Estado de Conservação *</label>
+            <select id="estado" name="estado" required>
+              <option value="">Selecione...</option>
+              <option value="Novo / Em Construção">Novo / Em Construção</option>
+              <option value="Remodelado">Remodelado</option>
+              <option value="Usado - Bom Estado">Usado - Bom Estado</option>
+              <option value="Usado - A Precisar Melhorias">Usado - A Precisar Melhorias</option>
+              <option value="Para Obras Totais">Para Obras Totais</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="certificado">Certificado Energético</label>
+            <select id="certificado" name="certificado">
+              <option value="">Não indicado</option>
+              <option value="A+">A+</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="B-">B-</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="E">E</option>
+              <option value="F">F</option>
+            </select>
+          </div>
+
+          <div class="full">
+            <label for="extras">Extras / Mais-Valias</label>
+            <input id="extras" name="extras" type="text" placeholder="Clique nas sugestões abaixo ou escreva..." />
+            <div class="extras-chips" id="extrasChips">
+              <button type="button" class="chip-extra" data-val="Garagem Box">Garagem Box</button>
+              <button type="button" class="chip-extra" data-val="Garagem + Arrecadação">Garagem + Arrecadação</button>
+              <button type="button" class="chip-extra" data-val="Elevador">Elevador</button>
+              <button type="button" class="chip-extra" data-val="Varanda / Terraço">Varanda / Terraço</button>
+              <button type="button" class="chip-extra" data-val="Jardim / Quintal">Jardim / Quintal</button>
+              <button type="button" class="chip-extra" data-val="Piscina">Piscina</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">2. Registo Fotográfico (Opcional — até 3 fotos)</div>
+        <div class="photos-grid">
+          <div class="photo-slot" data-slot="0">
+            <input type="file" accept="image/*" id="fotoInput0" />
+            <button type="button" class="photo-remove" title="Remover foto">×</button>
+            <span class="slot-label">+ Foto 1 (Capa)</span>
+            <span class="slot-hint">Fachada ou divisão principal</span>
+          </div>
+
+          <div class="photo-slot" data-slot="1">
+            <input type="file" accept="image/*" id="fotoInput1" />
+            <button type="button" class="photo-remove" title="Remover foto">×</button>
+            <span class="slot-label">+ Foto 2</span>
+            <span class="slot-hint">Interior / Cozinha / Sala</span>
+          </div>
+
+          <div class="photo-slot" data-slot="2">
+            <input type="file" accept="image/*" id="fotoInput2" />
+            <button type="button" class="photo-remove" title="Remover foto">×</button>
+            <span class="slot-label">+ Foto 3</span>
+            <span class="slot-hint">Exterior / Terraço / Vista</span>
+          </div>
+        </div>
+
+        <div class="section-title">3. Dados de Contacto</div>
+        <div class="grid">
+          <div>
+            <label for="nome">Nome *</label>
+            <input id="nome" name="nome" type="text" required placeholder="O seu nome" />
+          </div>
+
+          <div>
+            <label for="telefone">Telefone *</label>
+            <input id="telefone" name="telefone" type="tel" required value="926576000" />
+          </div>
+
+          <div class="full">
+            <label for="email">Email *</label>
+            <input id="email" name="email" type="email" required placeholder="exemplo@dominio.pt" />
+          </div>
+        </div>
+
+        <label class="checkbox-row">
+          <input id="rgpd" name="rgpd" type="checkbox" required />
+          <span>Aceito o tratamento dos meus dados de contacto ao abrigo do RGPD para efeitos desta avaliação imobiliária e envio do respetivo estudo comparativo.</span>
+        </label>
+
+        <button id="btnSubmit" class="btn-submit" type="submit">Solicitar Avaliação Gratuita</button>
+        <div id="statusBox" class="status" role="alert"></div>
+      </form>
+
+      <div class="footer-note">
+        Hermes Imobiliária • Estudo comparativo de mercado baseado na oferta atual e características do imóvel
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyi-Egnft5yY2Re6shlBwPEvwbGgOZQnPJPfc3a14VxBLqmuGcxQ8Tbw51S9VBqbQrc/exec";
+
+    const form = document.getElementById("simuladorForm");
+    const btnSubmit = document.getElementById("btnSubmit");
+    const statusBox = document.getElementById("statusBox");
+    const extrasInput = document.getElementById("extras");
+    const fotosBase64 = [null, null, null];
+
+    // Chips interativos para Extras
+    document.querySelectorAll(".chip-extra").forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        const valor = chip.getAttribute("data-val");
+        const atuais = extrasInput.value
+          .split(",")
+          .map(function (s) { return s.trim(); })
+          .filter(Boolean);
+
+        const idx = atuais.indexOf(valor);
+        if (idx === -1) {
+          atuais.push(valor);
+          chip.classList.add("ativo");
+        } else {
+          atuais.splice(idx, 1);
+          chip.classList.remove("ativo");
+        }
+        extrasInput.value = atuais.join(", ");
+      });
+    });
+
+    // Redimensionar e comprimir foto no browser antes de enviar (evita payloads gigantes no Apps Script)
+    function comprimirImagem(file, maxLargura, qualidade) {
+      return new Promise(function (resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          const img = new Image();
+          img.onload = function () {
+            let w = img.width;
+            let h = img.height;
+            if (w > maxLargura) {
+              h = Math.round((h * maxLargura) / w);
+              w = maxLargura;
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL("image/jpeg", qualidade));
+          };
+          img.onerror = reject;
+          img.src = ev.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Gestão dos 3 slots de fotografia
+    document.querySelectorAll(".photo-slot").forEach(function (slot) {
+      const idx = Number(slot.getAttribute("data-slot"));
+      const input = slot.querySelector("input[type='file']");
+      const btnRemove = slot.querySelector(".photo-remove");
+
+      slot.addEventListener("click", function (e) {
+        if (e.target === btnRemove) return;
+        input.click();
+      });
+
+      input.addEventListener("change", async function () {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        try {
+          const dataUrl = await comprimirImagem(file, 1024, 0.78);
+          fotosBase64[idx] = dataUrl;
+
+          let imgEl = slot.querySelector("img");
+          if (!imgEl) {
+            imgEl = document.createElement("img");
+            slot.appendChild(imgEl);
+          }
+          imgEl.src = dataUrl;
+          slot.classList.add("has-image");
+        } catch (err) {
+          mostrarEstado("err", "Não foi possível carregar uma das imagens selecionadas.");
+        }
+      });
+
+      btnRemove.addEventListener("click", function (e) {
+        e.stopPropagation();
+        fotosBase64[idx] = null;
+        input.value = "";
+        const imgEl = slot.querySelector("img");
+        if (imgEl) imgEl.remove();
+        slot.classList.remove("has-image");
+      });
+    });
+
+    function mostrarEstado(tipo, mensagem) {
+      statusBox.className = "status " + tipo;
+      statusBox.textContent = mensagem;
+    }
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const payload = {
+        morada: document.getElementById("morada").value.trim(),
+        freguesia: document.getElementById("freguesia").value.trim(),
+        tipologia: document.getElementById("tipologia").value.trim(),
+        areaUtil: Number(document.getElementById("areaUtil").value) || 0,
+        areaBruta: Number(document.getElementById("areaBruta").value) || 0,
+        estado: document.getElementById("estado").value.trim(),
+        certificado: document.getElementById("certificado").value.trim(),
+        extras: document.getElementById("extras").value.trim(),
+        fotos: fotosBase64.filter(Boolean),
+        nome: document.getElementById("nome").value.trim(),
+        telefone: document.getElementById("telefone").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        rgpd: document.getElementById("rgpd").checked
+      };
+
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = "A enviar avaliação...";
+      mostrarEstado("ok", "A submeter dados e fotografias...");
+
+      try {
+        await fetch(WEB_APP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        mostrarEstado("ok", "Pedido enviado com sucesso. Os cálculos, parecer técnico e relatório PDF estão a ser gerados.");
+        form.reset();
+        document.getElementById("telefone").value = "926576000";
+        document.querySelectorAll(".chip-extra").forEach(function (c) { c.classList.remove("ativo"); });
+        document.querySelectorAll(".photo-slot").forEach(function (slot, i) {
+          fotosBase64[i] = null;
+          const img = slot.querySelector("img");
+          if (img) img.remove();
+          slot.classList.remove("has-image");
+        });
+      } catch (err) {
+        mostrarEstado("err", "Erro ao enviar o formulário. Verifique a ligação à internet e tente novamente.");
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = "Solicitar Avaliação Gratuita";
+      }
+    });
+  </script>
+</body>
+</html>
